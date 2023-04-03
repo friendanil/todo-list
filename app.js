@@ -1,6 +1,8 @@
 const loginForm = document.getElementById('login-form')
 const welcomeSection = document.getElementById('welcome-section')
 const todoSection = document.getElementById('todo-section')
+let todoList = []
+let authToken = ''
 
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -28,9 +30,7 @@ loginForm.addEventListener('submit', (e) => {
     .then(data => {
         // console.log('login', data)
         authToken = data.data.token
-        console.log('authToken', authToken)
-
-        // listAccount()
+        // console.log('authToken', authToken)
 
         loginForm.reset()
         welcomeSection.classList.add('d-none')
@@ -44,14 +44,22 @@ const getSuggestionBox = async () => {
         .then(res => res.json())
         .then(data => {
             // console.log(data)
+            todoList = data
             data.forEach(todo => {
                 console.log('todo', todo)
+                let isTodoCompleted = false
+                if (Object.keys(todo.data.suggestionBox).includes('isTodoCompleted')) {
+                    isTodoCompleted = todo.data.suggestionBox.isTodoCompleted
+                    console.log('IF')
+                }
+                console.log('isTodoCompleted', isTodoCompleted)
+                
                 const todoItem = `
                 <div class="todo my-4">
                     <h2>${todo.data.suggestionBox.suggestion}</h2>
                     <a href="${todo.data.suggestionBox.url}" target="_blank">${todo.data.suggestionBox.url}</a>
                     <div class="todo-check">
-                        <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" name="isTodoCompleted">
+                        <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}">
                         <label for="isTodoCompleted"></label>
                     </div>
                 </div>
@@ -66,13 +74,57 @@ const getSuggestionBox = async () => {
 const checkStatus = () => {
     const checkBoxes = document.querySelectorAll('.todo input')
     // console.log('checkBoxes', checkBoxes)
-    checkBoxes.forEach(box => {
+    checkBoxes.forEach((box, index) => {
         box.addEventListener('click', (e) => {
-            // console.log(e)
-            // console.log(e.target.parentElement.parentElement)
+            console.log(e)
+
             const todoEl = e.target.parentElement.parentElement
             const todoHeading = todoEl.querySelector('h2')
-            todoHeading.classList.toggle('text-decoration-line-through')
+            
+            if (e.target.checked) {
+                todoHeading.classList.add('text-decoration-line-through')
+            } else {
+                todoHeading.classList.remove('text-decoration-line-through')
+            }
+
+            todoList[index].data.suggestionBox.isTodoCompleted = e.target.checked
+
+            updateTodo(todoList[index])
         })
+        
+    })
+}
+
+const updateTodo = (data) => {
+    console.log('uddateTodo', data)
+
+    let checkboxInfo = data
+
+    console.log('id', checkboxInfo.id)
+
+    let checkboxData = {
+        "data": {
+            "suggestionBox": {
+                "suggestion": checkboxInfo.data.suggestionBox.suggestion,
+                "url": checkboxInfo.data.suggestionBox.url,
+                "isTodoCompleted": checkboxInfo.data.suggestionBox.isTodoCompleted
+            },
+            "id": checkboxInfo.id
+        },
+    }
+
+    checkboxData = JSON.stringify(checkboxData)
+
+    fetch(`https://apitest.boomconcole.com/api/concepts/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        },
+        body: checkboxData,
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log('update', data)
     })
 }
