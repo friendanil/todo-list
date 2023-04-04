@@ -6,7 +6,10 @@ let authToken = ''
 
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault()
-    console.log('login clicked')
+    const loginBtn = document.querySelector('.btn-login')
+    loginBtn.innerText = 'Logging...'
+    loginBtn.classList.add('disabled')
+    // console.log('login clicked')
     const formData = new FormData(loginForm)
     const email = formData.get('loginEmail')
     const password = formData.get('loginPassword')
@@ -46,13 +49,13 @@ const getSuggestionBox = async () => {
             // console.log(data)
             todoList = data
             data.forEach(todo => {
-                console.log('todo', todo)
+                // console.log('todo', todo)
                 let isTodoCompleted = false
                 if (Object.keys(todo.data.suggestionBox).includes('isTodoCompleted')) {
                     isTodoCompleted = todo.data.suggestionBox.isTodoCompleted
-                    console.log('IF')
+                    // console.log('IF')
                 }
-                console.log('isTodoCompleted', isTodoCompleted)
+                // console.log('isTodoCompleted', isTodoCompleted)
                 
                 let checkboxClass = ''
                 let isChecked = ''
@@ -67,18 +70,22 @@ const getSuggestionBox = async () => {
                     imgSrc = `https://apitest.boomconcole.com/${todo.data.suggestionBox.image_path}`
                     imgClass = ''
                 }
+
+                let linkClass = ''
+                if (!todo.data.suggestionBox.url) linkClass = 'd-none'
                 
                 const todoItem = `
-                <div class="todo my-4">
-                    <h2 class="${checkboxClass}">${todo.data.suggestionBox.suggestion}</h2>
-                    <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
-                    <a href="${todo.data.suggestionBox.url}" target="_blank">${todo.data.suggestionBox.url}</a>
-                    <div class="todo-check">
-                        <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
-                        <label for="isTodoCompleted"></label>
+                    <div class="todo my-4 todo-bg p-4 rounded">
+                        <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
+                        <h2 class="${checkboxClass} mt-2">${todo.data.suggestionBox.suggestion}</h2>
+                        <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
+                        <div class="todo-check">
+                            <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
+                            <label for="isTodoCompleted"></label>
+                        </div>
+
                     </div>
-                </div>
-                `
+                    `
                 document.querySelector('.todo-list').innerHTML += todoItem
             })
         })
@@ -91,7 +98,7 @@ const checkStatus = () => {
     // console.log('checkBoxes', checkBoxes)
     checkBoxes.forEach((box, index) => {
         box.addEventListener('click', (e) => {
-            console.log(e)
+            // console.log(e)
 
             const todoEl = e.target.parentElement.parentElement
             const todoHeading = todoEl.querySelector('h2')
@@ -111,11 +118,11 @@ const checkStatus = () => {
 }
 
 const updateTodo = (data) => {
-    console.log('uddateTodo', data)
+    // console.log('uddateTodo', data)
 
     let checkboxInfo = data
 
-    console.log('id', checkboxInfo.id)
+    // console.log('id', checkboxInfo.id)
 
     let checkboxData = {
         "data": {
@@ -144,6 +151,6 @@ const updateTodo = (data) => {
     })
     .then(res => res.json())
     .then(data => {
-        console.log('update', data)
+        console.log('updated', data)
     })
 }
