@@ -102,7 +102,7 @@ const getSuggestionBox = async () => {
                             </div>
                             <div class="col-6">
                                 <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
-                                <h2 class="${checkboxClass} mt-2">${todo.data.suggestionBox.suggestion}</h2>
+                                <h2 class="${checkboxClass}">${todo.data.suggestionBox.suggestion}</h2>
                             </div>
                             <div class="col-4">
                                 <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
@@ -124,7 +124,7 @@ const checkStatus = () => {
         box.addEventListener('click', (e) => {
             // console.log(e)
 
-            const todoEl = e.target.parentElement.parentElement
+            const todoEl = e.target.parentElement.parentElement.parentElement
             const todoHeading = todoEl.querySelector('h2')
             
             if (e.target.checked) {
