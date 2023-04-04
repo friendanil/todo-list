@@ -54,12 +54,19 @@ const getSuggestionBox = async () => {
                 }
                 console.log('isTodoCompleted', isTodoCompleted)
                 
+                let checkboxClass = ''
+                let isChecked = ''
+                if (isTodoCompleted) {
+                    checkboxClass = 'text-decoration-line-through'
+                    isChecked = 'checked'
+                }
+                
                 const todoItem = `
                 <div class="todo my-4">
-                    <h2>${todo.data.suggestionBox.suggestion}</h2>
+                    <h2 class="${checkboxClass}">${todo.data.suggestionBox.suggestion}</h2>
                     <a href="${todo.data.suggestionBox.url}" target="_blank">${todo.data.suggestionBox.url}</a>
                     <div class="todo-check">
-                        <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}">
+                        <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
                         <label for="isTodoCompleted"></label>
                     </div>
                 </div>
