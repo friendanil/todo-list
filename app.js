@@ -60,36 +60,36 @@ onload = (event) => {
 };
 
 const getSuggestionBox = async () => {
-    await fetch(`https://apitest.boomconcole.com/api/list-api-clean?type=suggestionBox`)
+    await fetch(`https://apitest.boomconcole.com/api/searchApi?composition=suggestionBox&search=0&type=isTodoCompleted`)
         .then(res => res.json())
         .then(data => {
             // console.log(data)
             todoList = data
             data.forEach(todo => {
                 // console.log('todo', todo)
-                let isTodoCompleted = false
-                if (Object.keys(todo.data.suggestionBox).includes('isTodoCompleted')) {
-                    isTodoCompleted = todo.data.suggestionBox.isTodoCompleted
-                    // console.log('IF')
-                }
-                // console.log('isTodoCompleted', isTodoCompleted)
+                let isTodoCompleted = todo.suggestionBox.isTodoCompleted
+                // if (Object.keys(todo.suggestionBox).includes('isTodoCompleted')) {
+                //     isTodoCompleted = todo.suggestionBox.isTodoCompleted
+                //     // console.log('IF')
+                // }
+                console.log('isTodoCompleted', isTodoCompleted, typeof(isTodoCompleted))
                 
                 let checkboxClass = ''
                 let isChecked = ''
-                if (isTodoCompleted) {
+                if (isTodoCompleted === 1) {
                     checkboxClass = 'text-decoration-line-through'
                     isChecked = 'checked'
                 }
 
                 let imgSrc = ''
                 let imgClass = ' d-none'
-                if (todo.data.suggestionBox.image_path) {
-                    imgSrc = `https://apitest.boomconcole.com/${todo.data.suggestionBox.image_path}`
+                if (todo.suggestionBox.image_path) {
+                    imgSrc = `https://apitest.boomconcole.com/${todo.suggestionBox.image_path}`
                     imgClass = ''
                 }
 
                 let linkClass = ''
-                if (!todo.data.suggestionBox.url) linkClass = 'd-none'
+                if (!todo.suggestionBox.url) linkClass = 'd-none'
                 
                 const todoItem = `
                     <div class="todo my-4 todo-bg p-4 rounded">
@@ -101,11 +101,11 @@ const getSuggestionBox = async () => {
                                 </label>
                             </div>
                             <div class="col-6">
-                                <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
-                                <h2 class="${checkboxClass}">${todo.data.suggestionBox.suggestion}</h2>
+                                <a href="${todo.suggestionBox.url}" class="${linkClass} text-break" target="_blank">${todo.suggestionBox.url}</a>
+                                <h2 class="${checkboxClass} text-break">${todo.suggestionBox.suggestion}</h2>
                             </div>
                             <div class="col-4">
-                                <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
+                                <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.suggestionBox.suggestion}">
                             </div>
                         </div>
                     </div>
@@ -119,10 +119,10 @@ const getSuggestionBox = async () => {
 
 const checkStatus = () => {
     const checkBoxes = document.querySelectorAll('.todo input')
-    // console.log('checkBoxes', checkBoxes)
+    console.log('checkBoxes', checkBoxes)
     checkBoxes.forEach((box, index) => {
         box.addEventListener('click', (e) => {
-            // console.log(e)
+            console.log(e)
 
             const todoEl = e.target.parentElement.parentElement.parentElement
             const todoHeading = todoEl.querySelector('h2')
@@ -133,7 +133,9 @@ const checkStatus = () => {
                 todoHeading.classList.remove('text-decoration-line-through')
             }
 
-            todoList[index].data.suggestionBox.isTodoCompleted = e.target.checked
+            if (todoList[index].suggestionBox.isTodoCompleted) {
+                todoList[index].suggestionBox.isTodoCompleted = e.target.checked
+            }
 
             updateTodo(todoList[index])
         })
@@ -150,15 +152,15 @@ const updateTodo = (data) => {
 
     let checkboxData = {
         "suggestionBox": {
-            "suggestion": checkboxInfo.data.suggestionBox.suggestion,
-            "url": checkboxInfo.data.suggestionBox.url,
-            "isTodoCompleted": checkboxInfo.data.suggestionBox.isTodoCompleted,
-            "id": checkboxInfo.id
+            "suggestion": checkboxInfo.suggestionBox.suggestion,
+            "url": checkboxInfo.suggestionBox.url,
+            "isTodoCompleted": checkboxInfo.suggestionBox.isTodoCompleted,
+            "id": checkboxInfo.suggestionBox.id
         }
     }
 
-    if (checkboxInfo.data.suggestionBox.image_path) {
-        checkboxData.data.suggestionBox.image_path = checkboxInfo.data.suggestionBox.image_path
+    if (checkboxInfo.suggestionBox.image_path) {
+        checkboxData.suggestionBox.image_path = checkboxInfo.suggestionBox.image_path
     }
 
     checkboxData = JSON.stringify(checkboxData)
@@ -174,5 +176,6 @@ const updateTodo = (data) => {
     .then(res => res.json())
     .then(data => {
         console.log('updated', data)
+        location.reload()
     })
 }
