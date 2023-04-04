@@ -95,11 +95,11 @@ const getSuggestionBox = async () => {
                     <div class="todo my-4 todo-bg p-4 rounded">
                         <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
                         <h2 class="${checkboxClass} mt-2">${todo.data.suggestionBox.suggestion}</h2>
-                        <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
-                        <div class="todo-check">
+                        <img src="${imgSrc}" class="img-fluid mb-3 d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
+                        <label class="todo-container">
                             <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
-                            <label for="isTodoCompleted"></label>
-                        </div>
+                            <span class="checkmark"></span>
+                        </label>
                     </div>
                     `
                 document.querySelector('.todo-list').innerHTML += todoItem
