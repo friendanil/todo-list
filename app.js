@@ -93,13 +93,21 @@ const getSuggestionBox = async () => {
                 
                 const todoItem = `
                     <div class="todo my-4 todo-bg p-4 rounded">
-                        <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
-                        <h2 class="${checkboxClass} mt-2">${todo.data.suggestionBox.suggestion}</h2>
-                        <img src="${imgSrc}" class="img-fluid mb-3 d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
-                        <label class="todo-container">
-                            <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
-                            <span class="checkmark"></span>
-                        </label>
+                        <div class="row">
+                            <div class="col-2">
+                                <label class="todo-container">
+                                    <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                <a href="${todo.data.suggestionBox.url}" class="${linkClass}" target="_blank">${todo.data.suggestionBox.url}</a>
+                                <h2 class="${checkboxClass} mt-2">${todo.data.suggestionBox.suggestion}</h2>
+                            </div>
+                            <div class="col-4">
+                                <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
+                            </div>
+                        </div>
                     </div>
                     `
                 document.querySelector('.todo-list').innerHTML += todoItem
