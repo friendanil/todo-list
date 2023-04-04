@@ -60,10 +60,18 @@ const getSuggestionBox = async () => {
                     checkboxClass = 'text-decoration-line-through'
                     isChecked = 'checked'
                 }
+
+                let imgSrc = ''
+                let imgClass = ' d-none'
+                if (todo.data.suggestionBox.image_path) {
+                    imgSrc = `https://apitest.boomconcole.com/${todo.data.suggestionBox.image_path}`
+                    imgClass = ''
+                }
                 
                 const todoItem = `
                 <div class="todo my-4">
                     <h2 class="${checkboxClass}">${todo.data.suggestionBox.suggestion}</h2>
+                    <img src="${imgSrc}" class="img-fluid d-block ${imgClass}" alt="${todo.data.suggestionBox.suggestion}">
                     <a href="${todo.data.suggestionBox.url}" target="_blank">${todo.data.suggestionBox.url}</a>
                     <div class="todo-check">
                         <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
@@ -118,6 +126,10 @@ const updateTodo = (data) => {
             },
             "id": checkboxInfo.id
         },
+    }
+
+    if (checkboxInfo.data.suggestionBox.image_path) {
+        checkboxData.data.suggestionBox.image_path = checkboxInfo.data.suggestionBox.image_path
     }
 
     checkboxData = JSON.stringify(checkboxData)
