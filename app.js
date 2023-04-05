@@ -68,10 +68,13 @@ onload = (event) => {
 };
 
 const getSuggestionBox = async () => {
+    const todoListEl = document.querySelector('.todo-list')
+    todoListEl.innerHTML = "<p class='text-center'>Loading...</p>"
     await fetch(`https://apitest.boomconcole.com/api/searchApi?composition=suggestionBox&search=0&type=isTodoCompleted`)
         .then(res => res.json())
         .then(data => {
             // console.log(data)
+            todoListEl.innerHTML = ''
             todoList = data
             data.forEach(todo => {
                 // console.log('todo', todo)
@@ -118,7 +121,7 @@ const getSuggestionBox = async () => {
                         </div>
                     </div>
                     `
-                document.querySelector('.todo-list').innerHTML += todoItem
+                    todoListEl.innerHTML += todoItem
             })
         })
 
