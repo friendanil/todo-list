@@ -30,7 +30,7 @@ loginForm.addEventListener('submit', (e) => {
 
     data = JSON.stringify(data)
 
-    // create student account / Signup
+    // login
     fetch(`https://apitest.boomconcole.com/api/auth/login`, {
         method: 'POST',
         headers: {
@@ -130,9 +130,9 @@ const checkStatus = () => {
     // console.log('checkBoxes', checkBoxes)
     checkBoxes.forEach((box, index) => {
         box.addEventListener('click', (e) => {
+            // console.log(e)
+
             selectedData = ''
-            console.log(e)
-            // e.preventDefault()
 
             modalCompleteBtn.replaceWith(modalCompleteBtn.cloneNode(true));
             modalCancelBtn.replaceWith(modalCancelBtn.cloneNode(true));
@@ -153,19 +153,18 @@ const checkStatus = () => {
             // }
 
             selectedData = todoList[index]
+            openModal()
 
             // console.log('checkbox clicked', todoList[index])
             // openModal(todoList[index], index)
-            openModal()
             // updateTodo(todoList[index])
         }, {signal} )
         
     })
 }
 
-const openModal = (data, index) => {
-    console.log('open modal')
-    // updateTodo(data)
+const openModal = () => {
+    // console.log('open modal')
     const modal = document.getElementById('confirmationModal')
     modal.classList.add('show')
     modal.classList.add('d-block')
@@ -177,42 +176,18 @@ const openModal = (data, index) => {
     const modalCompleteBtn = document.querySelector('#confirmationModal .modal-body .btn-primary')
 
     modalCancelBtn.addEventListener('click', closeModal, {signal})
-
     modalCompleteBtn.addEventListener('click', (e) => {
-        // modalCancelBtn.removeEventListener('click', closeModal, true)
         modalCompleteBtn.innerText = 'Completing...'
         modalCompleteBtn.classList.add('disabled')
         modalCancelBtn.classList.add('disabled')
 
-        console.log('hey', data)
-        setTimeout(() => {
-            // const x = todoList[index]
-            // console.log('x', x)
-            updateTodo(data)
-        }, 100);
-
+        updateTodo()
         controller.abort();
-
     }, {signal})
-
-    // abort the listener!
-    // controller.abort();
 }
 
-// const completeTodo = (data) => {
-//     console.log('completedTodo', data)
-//     const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
-//     const modalCompleteBtn = document.querySelector('#confirmationModal .modal-body .btn-primary')
-//     modalCompleteBtn.innerText = 'Completing...'
-//     modalCompleteBtn.classList.add('disabled')
-//     modalCancelBtn.classList.add('disabled')
-
-//     updateTodo(data)
-// }
-
 const closeModal = (e) => {
-    console.log('closed')
-    
+    // console.log('closed')
     const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
     modalCancelBtn.removeEventListener('click', closeModal, true)
     const h2 = document.querySelector('.text-decoration-line-through')
@@ -222,8 +197,7 @@ const closeModal = (e) => {
 }
 
 const hideModal = () => {
-    console.log('hide', todoList)
-    // location.reload()
+    // console.log('hide', todoList)
     const modal = document.getElementById('confirmationModal')
     modal.classList.remove('show')
     modal.classList.remove('d-block')
@@ -232,17 +206,10 @@ const hideModal = () => {
     backdrop.classList.remove('show')
 }
 
-const updateTodo = (data) => {
-
-    console.log('uddateTodo', selectedData)
-
+const updateTodo = () => {
+    // console.log('uddateTodo', selectedData)
     // return
-
-    // let checkboxInfo = data
     let checkboxInfo = selectedData
-
-    // console.log('id', checkboxInfo.id)
-
     let checkboxData = {
         "suggestionBox": {
             "suggestion": checkboxInfo.suggestionBox.suggestion,
@@ -257,8 +224,10 @@ const updateTodo = (data) => {
         checkboxData.suggestionBox.image_path = checkboxInfo.suggestionBox.image_path
     }
 
-    checkboxData = JSON.stringify(checkboxData)
+    console.log('checkboxData', checkboxData)
+    // return
 
+    checkboxData = JSON.stringify(checkboxData)
     fetch(`https://apitest.boomconcole.com/api/concepts/update`, {
         method: 'POST',
         headers: {
