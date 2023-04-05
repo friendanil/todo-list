@@ -4,6 +4,14 @@ const todoSection = document.getElementById('todo-section')
 let todoList = []
 let authToken = ''
 
+let selectedData
+
+const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
+const modalCompleteBtn = document.querySelector('#confirmationModal .modal-body .btn-primary')
+
+let controller = new AbortController();
+let { signal } = controller;
+
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault()
     setStorage()
@@ -40,7 +48,7 @@ loginForm.addEventListener('submit', (e) => {
         loginForm.reset()
         welcomeSection.classList.add('d-none')
         todoSection.classList.remove('d-none')
-        getSuggestionBox()
+        // getSuggestionBox()
     })
 })
 
@@ -72,7 +80,7 @@ const getSuggestionBox = async () => {
                 //     isTodoCompleted = todo.suggestionBox.isTodoCompleted
                 //     // console.log('IF')
                 // }
-                console.log('isTodoCompleted', isTodoCompleted, typeof(isTodoCompleted))
+                // console.log('isTodoCompleted', isTodoCompleted, typeof(isTodoCompleted))
                 
                 let checkboxClass = ''
                 let isChecked = ''
@@ -96,7 +104,7 @@ const getSuggestionBox = async () => {
                         <div class="row">
                             <div class="col-2">
                                 <label class="todo-container">
-                                    <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" value="${isTodoCompleted}" ${isChecked}>
+                                    <input type="checkbox" name="isTodoCompleted" id="isTodoCompleted" ${isChecked}>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -119,10 +127,17 @@ const getSuggestionBox = async () => {
 
 const checkStatus = () => {
     const checkBoxes = document.querySelectorAll('.todo input')
-    console.log('checkBoxes', checkBoxes)
+    // console.log('checkBoxes', checkBoxes)
     checkBoxes.forEach((box, index) => {
         box.addEventListener('click', (e) => {
+            selectedData = ''
             console.log(e)
+            // e.preventDefault()
+
+            modalCompleteBtn.replaceWith(modalCompleteBtn.cloneNode(true));
+            modalCancelBtn.replaceWith(modalCancelBtn.cloneNode(true));
+
+            modalCancelBtn.removeEventListener('click', closeModal, true)
 
             const todoEl = e.target.parentElement.parentElement.parentElement
             const todoHeading = todoEl.querySelector('h2')
@@ -133,20 +148,98 @@ const checkStatus = () => {
                 todoHeading.classList.remove('text-decoration-line-through')
             }
 
-            if (todoList[index].suggestionBox.isTodoCompleted) {
-                todoList[index].suggestionBox.isTodoCompleted = e.target.checked
-            }
+            // if (todoList[index].suggestionBox.isTodoCompleted) {
+            //     todoList[index].suggestionBox.isTodoCompleted = e.target.checked
+            // }
 
-            updateTodo(todoList[index])
-        })
+            selectedData = todoList[index]
+
+            // console.log('checkbox clicked', todoList[index])
+            // openModal(todoList[index], index)
+            openModal()
+            // updateTodo(todoList[index])
+        }, {signal} )
         
     })
 }
 
-const updateTodo = (data) => {
-    // console.log('uddateTodo', data)
+const openModal = (data, index) => {
+    console.log('open modal')
+    // updateTodo(data)
+    const modal = document.getElementById('confirmationModal')
+    modal.classList.add('show')
+    modal.classList.add('d-block')
+    const backdrop = document.querySelector('.modal-backdrop')
+    backdrop.classList.remove('d-none')
+    backdrop.classList.add('show')
 
-    let checkboxInfo = data
+    const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
+    const modalCompleteBtn = document.querySelector('#confirmationModal .modal-body .btn-primary')
+
+    modalCancelBtn.addEventListener('click', closeModal, {signal})
+
+    modalCompleteBtn.addEventListener('click', (e) => {
+        // modalCancelBtn.removeEventListener('click', closeModal, true)
+        modalCompleteBtn.innerText = 'Completing...'
+        modalCompleteBtn.classList.add('disabled')
+        modalCancelBtn.classList.add('disabled')
+
+        console.log('hey', data)
+        setTimeout(() => {
+            // const x = todoList[index]
+            // console.log('x', x)
+            updateTodo(data)
+        }, 100);
+
+        controller.abort();
+
+    }, {signal})
+
+    // abort the listener!
+    // controller.abort();
+}
+
+// const completeTodo = (data) => {
+//     console.log('completedTodo', data)
+//     const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
+//     const modalCompleteBtn = document.querySelector('#confirmationModal .modal-body .btn-primary')
+//     modalCompleteBtn.innerText = 'Completing...'
+//     modalCompleteBtn.classList.add('disabled')
+//     modalCancelBtn.classList.add('disabled')
+
+//     updateTodo(data)
+// }
+
+const closeModal = (e) => {
+    console.log('closed')
+    
+    const modalCancelBtn = document.querySelector('#confirmationModal .modal-body .btn-secondary')
+    modalCancelBtn.removeEventListener('click', closeModal, true)
+    const h2 = document.querySelector('.text-decoration-line-through')
+    const todoBox = h2.parentElement.parentElement
+    todoBox.querySelector('label').click()
+    hideModal()
+}
+
+const hideModal = () => {
+    console.log('hide', todoList)
+    // location.reload()
+    const modal = document.getElementById('confirmationModal')
+    modal.classList.remove('show')
+    modal.classList.remove('d-block')
+    const backdrop = document.querySelector('.modal-backdrop')
+    backdrop.classList.add('d-none')
+    backdrop.classList.remove('show')
+}
+
+const updateTodo = (data) => {
+
+    console.log('uddateTodo', selectedData)
+
+    // return
+
+    // let checkboxInfo = data
+    let checkboxInfo = selectedData
 
     // console.log('id', checkboxInfo.id)
 
@@ -154,7 +247,8 @@ const updateTodo = (data) => {
         "suggestionBox": {
             "suggestion": checkboxInfo.suggestionBox.suggestion,
             "url": checkboxInfo.suggestionBox.url,
-            "isTodoCompleted": checkboxInfo.suggestionBox.isTodoCompleted,
+            // "isTodoCompleted": checkboxInfo.suggestionBox.isTodoCompleted,
+            "isTodoCompleted": 1,
             "id": checkboxInfo.suggestionBox.id
         }
     }
@@ -176,6 +270,7 @@ const updateTodo = (data) => {
     .then(res => res.json())
     .then(data => {
         console.log('updated', data)
+        hideModal()
         location.reload()
     })
 }
