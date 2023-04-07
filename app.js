@@ -76,6 +76,7 @@ const getSuggestionBox = async () => {
             // console.log(data)
             todoListEl.innerHTML = ''
             todoList = data
+            data.reverse()
             data.forEach(todo => {
                 // console.log('todo', todo)
                 let isTodoCompleted = todo.suggestionBox.isTodoCompleted
